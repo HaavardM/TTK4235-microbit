@@ -41,7 +41,7 @@ typedef struct {
     volatile uint32_t TXD;
     volatile uint32_t RESERVE10;
     volatile uint32_t BAUDRATE;
-    volatile uint32_t RESERVE11[81];
+    volatile uint32_t RESERVE11[17];
     volatile uint32_t CONFIG;
 } NRF_UART_REG;
     
@@ -61,7 +61,7 @@ void uart_init() {
     UART->PSELCTS = 0xFFFFFFFF;
     UART->PSELRTS = 0xFFFFFFFF;
     //Set baudrate
-    UART->BAUDRATE = 9600;
+    UART->BAUDRATE = 0x00275000;
     
     //Enable UART
     UART->ENABLE = 4;
@@ -69,9 +69,20 @@ void uart_init() {
 }
 
 void uart_send(char letter) {
-
+    UART->STARTTX = 1;
+    UART->TXDRDY = 0;
+    UART->TXD = letter; 
+    while(!UART->TXDRDY) {}
+    UART->TXDRDY = 0;
+    UART->STOPTX = 1; 
 }
 
-void uart_read() {
-
+char uart_read() {
+    UART->STARTRX = 1;
+    if(UART->RXDRDY) {
+       UART->RXDRDY = 0;
+       return UART->RXD;
+    } else {
+         return '\0';
+    }
 }
