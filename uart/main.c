@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "uart.h"
+#include <stdio.h>
 
 #define GPIO ((NRF_GPIO_REGS*) 0x50000000)
 
@@ -48,6 +49,7 @@ int main(){
 	int sleep = 0;
 	while(1){
 
+                iprintf("Norge har %d fylker\n\r", 18);
 		/* Check if button B is pressed;
 		 * turn on LED matrix if it is. */
                 if(!(GPIO->IN & (1 << 26))) {
